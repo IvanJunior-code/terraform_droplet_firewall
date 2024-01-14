@@ -11,6 +11,7 @@ provider "digitalocean" {
   token = var.token
 }
 
+
 ###################### Droplet ######################
 resource "digitalocean_droplet" "terraform-droplet" {
   image    = var.image
@@ -20,6 +21,41 @@ resource "digitalocean_droplet" "terraform-droplet" {
   ssh_keys = [data.digitalocean_ssh_key.ssh-key.id]
 }
 ###################### ####### ######################
+
+
+###################### Firewall ######################
+resource "digitalocean_firewall" "firewall" {
+  name = "firewall-droplet"
+
+  droplet_ids = [digitalocean_droplet.terraform-droplet.id]
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "22"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "53" # para pacotes do Linux
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "22"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "53" # para pacotes do Linux
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+}
+###################### ######## ######################
+
 
 ##################### Variables #####################
 variable "token" {
