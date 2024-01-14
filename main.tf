@@ -107,7 +107,7 @@ data "digitalocean_ssh_key" "ssh-key" {
 ##################### ######### #####################
 
 ###################### Outputs ######################
-output "ssh-key" {
+output "ip-droplet" {
   value = digitalocean_droplet.terraform-droplet.ipv4_address # ip do droplet
 }
 ###################### ####### ######################
